@@ -1,0 +1,167 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApplication4
+{
+    class Program
+    {
+
+        static void Main(string[] args)
+        {
+            SortCharArr srt = new SortCharArr();
+        }
+    }
+    class SortCharArr
+    {
+        const int n = 3;
+        const int k = 5;
+        static string sortEn = "qwertyuiopasdfghjklzxcvbnm";
+        static string sortRu = "йцукенгшщзхъфывапролджэячсмитьбю";
+        StringBuilder sortArrEn = new StringBuilder(sortEn);
+        StringBuilder sortArrRu = new StringBuilder(sortRu);
+        public SortCharArr()
+        {
+            char[,] charArr = Input("Rus");
+            char[,] charArrRu = Input("Rus");
+            int sizeEn = sortEn.Length;
+            int sizeRu = sortRu.Length;
+            CreateCharArr(charArr, sortArrEn, sizeEn);
+            CreateCharArr(charArrRu, sortArrRu, sizeRu);
+            Output(charArr, n, k);
+            Console.WriteLine("|----Ru---|");
+            Output(charArrRu, n, k);
+            Console.WriteLine("|---Quick-Sort----|");
+            Arr2dTo1d arr2dEn = new Arr2dTo1d(charArr, n, k);
+            Arr2dTo1d arr2dRu = new Arr2dTo1d(charArrRu, n, k);
+            QuickSort(0, n * k - 1, arr2dEn, sortArrEn);
+            QuickSort(0, n * k - 1, arr2dRu, sortArrEn);
+            Output(charArr, n, k);
+            Console.WriteLine("|----Ru---|");
+            Output(charArrRu, n, k);
+            int x;
+        }
+        char[,] Input(string title)
+        {
+            Console.Write("Input arr("+title+") cols = ");
+            int n, k;
+            n = InputInt();
+            Console.Write("Input arr(" + title + ") rows = ");
+            k = InputInt();
+            return new char[n, k];
+        }
+        int InputInt()
+        {
+            bool allow = false;
+            int n;
+            do { 
+                try
+                {
+                    n = Convert.ToInt32(Console.ReadLine());
+                }
+                catch (Exception)
+                {
+                    allow = true;
+                    throw new Exception("Ошибка при вводе");
+                }
+            }while (allow) ;
+            return n;
+        }
+        void Output(char[,] charArr,int n,int k)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                Console.Write("|");
+                for (int j = 0; j < k; j++)
+                {
+                    Console.Write(" " + charArr[i, j]);
+                }
+                Console.Write("| \n");
+            }
+        }
+        void QuickSort(int start, int end, Arr2dTo1d charArr,StringBuilder sortArr)
+        {
+            int a = start, b = end;
+            char buffer;
+            int midd = Priorit(charArr[(a + b) / 2], sortArr);
+            while (a <= b)
+            {
+                while (Priorit(charArr[a], sortArr) < midd)
+                {
+                    a++;
+                }
+                while (Priorit(charArr[b], sortArr) > midd)
+                {
+                    b--;
+                }
+                if (a <= b)
+                {
+                    buffer = charArr[a];
+                    charArr[a++] = charArr[b];
+                    charArr[b--] = buffer;
+                }
+            }
+            if (start < b)
+            {
+                QuickSort(start, b, charArr, sortArr);
+            }
+            if (end > a)
+            {
+                QuickSort(a, end, charArr, sortArr);
+            }
+        }
+        void CreateCharArr(char[,]charArr, StringBuilder sortArr, int size)
+        {
+            Random rnd = new Random();
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < k; j++)
+                {
+                    charArr[i, j] = sortArr[rnd.Next(0, size)];
+                }
+            }
+        }
+        int Priorit(char ch, StringBuilder sortArr)
+        {
+            for (int i = 0, letters = sortArr.Length; i < letters; i++)
+            {
+                if (ch == sortArr[i])
+                {
+                    return i;
+                }
+            }
+            return 100;
+        }
+        public void Swap(ref char a, ref char b)
+        {
+            char buff = a;
+            a = b;
+            b = a;
+        }
+    }
+    class Arr2dTo1d
+    {
+        char[,] arr;
+        int n, k;
+        public Arr2dTo1d(char [,]arr2d,int n, int k)
+        {
+            arr = arr2d;
+            this.n = n;
+            this.k = k;
+        }
+        public char this[int i]
+        {
+            set
+            {
+                arr[i / k, i % k] = value;
+            }
+            get
+            {
+                return arr[i / k, i % k]; 
+            }
+        }
+
+    }
+}
