@@ -1,0 +1,1 @@
+convert index 2d array to 1d array (C#)
